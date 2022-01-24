@@ -8,10 +8,10 @@ def dF(W): # Sum of squares for the derivative
 	return sum(2 * ((W*x) - y) * x for x, y in points)
 
 W = 0
-learning_rate = 0.1
+learning_rate = 0.01
 
 for i in range(100):
 	value = F(W)
 	derivative = dF(W)
-	W -= learning_rate * derivative
-	print('Iteration: {}, W: {}, dF(W): {}'.format(i, W, derivative))
+	W = W - learning_rate * derivative
+	print('Iteration: {}, W: {}, F(W): {}'.format(i, W, value))
