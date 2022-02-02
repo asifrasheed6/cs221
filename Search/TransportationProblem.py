@@ -38,6 +38,20 @@ def backtrackAlgorithm(problem):
     recurr(problem.startState(), history=[], totalCost=0)
     return (bestSolution['cost'], bestSolution['history'])
 
-problem = TransportationProblem(N = 100)
+def dynamicProgramming(problem):
+    cache = {}
+    def futureCost(state):
+        if problem.isEnd(state):
+            return 0
+        if state in cache:
+            return cache[state]
+        result = min(cost + futureCost(newState) for action, newState, cost in problem.succAndCost(state))
+        cache[state] = result
+        return result
+    return (futureCost(problem.startState()), [])
+
+problem = TransportationProblem(N = 20)
 solution = backtrackAlgorithm(problem)
+solution2 = dynamicProgramming(problem)
 printSolution(solution)
+printSolution(solution2)
