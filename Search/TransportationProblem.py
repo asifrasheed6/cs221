@@ -62,8 +62,23 @@ def dynamicProgramming(problem):
 
     return (totalCost, history)
 
+def uniformCostSearch(problem):
+    frontier = util.PriorityQueue()
+    frontier.update(problem.startState(), 0)
+    totalCost = 0
+    history = []
+
+    while True:
+        state, prevCost = frontier.removeMin()
+        if problem.isEnd(state):
+            return (prevCost, history)
+        for action, newState, cost in problem.succAndCost(state):
+            frontier.update(newState, cost+prevCost)
+
 problem = TransportationProblem(N = 20)
 solution = backtrackAlgorithm(problem)
 solution2 = dynamicProgramming(problem)
+solution3 = uniformCostSearch(problem)
 printSolution(solution)
 printSolution(solution2)
+printSolution(solution3)
