@@ -1,3 +1,5 @@
+import util
+
 # Problem Definition
 class TransportationProblem(object):
     def __init__(self, N):

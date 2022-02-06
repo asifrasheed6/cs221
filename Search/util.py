@@ -1,28 +1,30 @@
-class PriorityQueue(object):
-    def __init__(self):
-        self.queue = []
-  
-    def __str__(self):
-        return ' '.join([str(i) for i in self.queue])
-  
-    # for checking if the queue is empty
-    def isEmpty(self):
-        return len(self.queue) == 0
-  
-    # for inserting an element in the queue
-    def insert(self, data):
-        self.queue.append(data)
-  
-    # for popping an element based on Priority
-    def delete(self):
-        try:
-            max = 0
-            for i in range(len(self.queue)):
-                if self.queue[i] > self.queue[max]:
-                    max = i
-            item = self.queue[max]
-            del self.queue[max]
-            return item
-        except IndexError:
-            print()
-            exit()
+import heapq, collections, re, sys, time, os, random
+
+# Data structure for supporting uniform cost search.
+class PriorityQueue:
+    def  __init__(self):
+        self.DONE = -100000
+        self.heap = []
+        self.priorities = {}  # Map from state to priority
+
+    # Insert |state| into the heap with priority |newPriority| if
+    # |state| isn't in the heap or |newPriority| is smaller than the existing
+    # priority.
+    # Return whether the priority queue was updated.
+    def update(self, state, newPriority):
+        oldPriority = self.priorities.get(state)
+        if oldPriority == None or newPriority < oldPriority:
+            self.priorities[state] = newPriority
+            heapq.heappush(self.heap, (newPriority, state))
+            return True
+        return False
+
+    # Returns (state with minimum priority, priority)
+    # or (None, None) if the priority queue is empty.
+    def removeMin(self):
+        while len(self.heap) > 0:
+            priority, state = heapq.heappop(self.heap)
+            if self.priorities[state] == self.DONE: continue  # Outdated priority, skip
+            self.priorities[state] = self.DONE
+            return (state, priority)
+        return (None, None) # Nothing left...
