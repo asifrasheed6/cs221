@@ -44,11 +44,21 @@ def dynamicProgramming(problem):
         if problem.isEnd(state):
             return 0
         if state in cache:
-            return cache[state]
-        result = min(cost + futureCost(newState) for action, newState, cost in problem.succAndCost(state))
+            return cache[state][0]
+        result = min((cost + futureCost(newState), action, newState, cost) for action, newState, cost in problem.succAndCost(state))
         cache[state] = result
-        return result
-    return (futureCost(problem.startState()), [])
+        return result[0]
+
+    state = problem.startState()
+    totalCost = futureCost(state)
+    history = []
+
+    while not problem.isEnd(state):
+        _, action, newState, cost = cache[state]
+        history.append((action, newState, cost))
+        state = newState
+
+    return (totalCost, history)
 
 problem = TransportationProblem(N = 20)
 solution = backtrackAlgorithm(problem)
