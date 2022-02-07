@@ -2,17 +2,18 @@ import util
 
 # Problem Definition
 class TransportationProblem(object):
-    def __init__(self, N):
+    def __init__(self, N, weights = {'Walk': 1, 'Tram': 2}):
         self.N = N
+        self.weights = weights
     def startState(self):
         return 1
     def succAndCost(self, state):
         # Action Name, New State, Cost
         result = []
         if state+1 <= self.N:
-            result.append(('Walk', state+1, 1))
+            result.append(('Walk', state+1, self.weights['Walk']))
         if state*2 <= self.N:
-            result.append(('Tram', state*2, 2))
+            result.append(('Tram', state*2, self.weights['Tram']))
         return result
     def isEnd(self, state):
         return state == self.N
@@ -82,3 +83,35 @@ solution3 = uniformCostSearch(problem)
 printSolution(solution)
 printSolution(solution2)
 printSolution(solution3)
+
+# Learning
+def predict(N, weights):
+    problem = TransportationProblem(N, weights)
+    totalCost, history = dynamicProgramming(problem)
+    return [action for action, state, cost in history]
+
+def generateExamples():
+    trueWeights = {'Walk': 1, 'Tram': 2}
+    return [(N, predict(N, trueWeights)) for N in range(1, 30)]
+
+def structuredPerceptron(examples):
+    weights = {'Walk': 1, 'Tram': 5}
+    for t in range(100):
+        numError = 0
+        for N, actions in examples:
+            prediction = predict(N, weights)
+            if actions != prediction:
+                numError += 1
+            for action in actions:
+                weights[action] -= 1
+            for action in prediction:
+                weights[action] += 1
+        print('Iteration = {}, numError = {}, weights = {}'.format(t, numError, weights))
+        if numError == 0:
+            break
+
+examples = generateExamples()
+print('Training Dataset:')
+for example in examples:
+    print(' ', example)
+structuredPerceptron(examples)
