@@ -95,7 +95,7 @@ def generateExamples():
     return [(N, predict(N, trueWeights)) for N in range(1, 30)]
 
 def structuredPerceptron(examples):
-    weights = {'Walk': 1, 'Tram': 5}
+    weights = {'Walk': 0, 'Tram': 0}
     for t in range(100):
         numError = 0
         for N, actions in examples:
